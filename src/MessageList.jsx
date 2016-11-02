@@ -1,4 +1,6 @@
 import React,  {Component} from 'react';
+import Message from './Message.jsx';
+
 
 class MessageList extends Component {
   render() {
@@ -6,12 +8,20 @@ class MessageList extends Component {
 
     return (
 
-        <div className="message">
-          <span className="username"><b>Anonymous1</b></span>
-          <span className="content">I won't be impressed with technology until I can download food.</span>
-        </div>
 
-    );
+      <div id="message-list">
+
+      {this.props.messages.map((message, index) => {
+            console.log(message);
+            console.log(index);
+          return <Message
+            message = {message}
+            key = {index}
+            />
+          })
+        }
+      </div>
+    )
   }
 }
 export default MessageList;

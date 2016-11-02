@@ -6,23 +6,22 @@ import MessageList from './MessageList.jsx';
 
 class App extends Component {
 constructor(props) {
-
     super(props);
+    this.pushNewMessage = this.pushNewMessage.bind(this);
     this.state = {
   currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
-  messages: [
-    {
-      username: "Bob",
-      content: "Has anyone seen my marbles?",
-    },
-    {
-      username: "Anonymous",
-      content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
-    }
-  ]
+  messages: []
+
 };
-console.log(this.state.currentUser.name);
+
+}
+ pushNewMessage(name, content){
+
+    const newMessage = {username: name, content: content};
+    const messages = this.state.messages.concat(newMessage)
+    this.setState({messages: messages})
   }
+
   render() {
     console.log();
     return (
@@ -31,12 +30,14 @@ console.log(this.state.currentUser.name);
           <h1>Chatty</h1>
         </nav>
         <div id="message-list">
-          <MessageList/>
-          <Message />
+          <MessageList messages={this.state.messages}/>
+
         </div>
-        <Chatbar currentUser={this.state.currentUser.name}/>
+        <Chatbar currentUser={this.state.currentUser.name} newMessage={this.pushNewMessage}/>
       </div>
     );
   }
 }
+
+
 export default App;
