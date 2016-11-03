@@ -3,23 +3,43 @@ import Chatbar from './ChatBar.jsx';
 import Message from './Message.jsx';
 import MessageList from './MessageList.jsx';
 
-
 class App extends Component {
-constructor(props) {
+  constructor(props) {
+
     super(props);
     this.pushNewMessage = this.pushNewMessage.bind(this);
     this.state = {
-  currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
-  messages: []
-
-};
-
+      currentUser: {name: ""}, // optional. if currentUser is not defined, it means the user is Anonymous
+      messages: []
+  };
 }
- pushNewMessage(name, content){
 
-    const newMessage = {username: name, content: content};
-    const messages = this.state.messages.concat(newMessage)
-    this.setState({messages: messages})
+  componentDidMount(){
+    this.socket = new WebSocket("ws://localhost:4000");
+    this.socket.onopen = (event) => {
+      console.log("Connected to Server.")
+      this.socket.onmessage = (event) => {
+        const newMessage = JSON.parse(event.data);
+        console.log(event.data);
+        const post = this.state.messages.concat(newMessage);
+        this.setState({messages: post});
+      }
+    }
+  };
+
+  sendMessageToServer(messageObj){
+  this.socket.send(JSON.stringify(messageObj))
+  }
+
+
+  pushNewMessage(name, content){
+
+    const newMessage = {username: name,
+      content: content};
+    // console.log(newMessage)
+    // const messages = this.state.messages.concat(newMessage);
+    // this.setState({messages: messages});
+    this.sendMessageToServer(newMessage);
   }
 
   render() {
