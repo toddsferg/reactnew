@@ -15,29 +15,48 @@ const server = express()
 // Create the WebSockets server
 const wss = new SocketServer({ server: server });
 
-  wss.broadcast = function broadcast(data){
-    wss.clients.forEach(function each(client){
-    client.send(data);
-    console.log(data);
-  })
-  };
 
+//creates broadcast, called in callback in ws.on
+wss.broadcast = function broadcast(data){
+  wss.clients.forEach(function each(client){
+  client.send(data);
+  console.log("DATA:" + data); //Whole object sent back
+  })
+};
+
+  let userOnline = 0;
   let messageID = 1;
 
-// Set up a callback that will run when a client connects to the server
-// When a client connects they are assigned a socket, represented by
-// the ws parameter in the callback.
 wss.on('connection', (ws) => {
   console.log('Client connected');
-  ws.on('message', function incoming(message){
-    console.log('breceived: %s', message);
+  userOnline += 1;
+
+
+   //incoming data from App.js
+  ws.on('message', function incoming(data){
+    let response = {};
+    let messageObject = JSON.parse(data);
+    console.log("wahtHHHHHHHHH: " + messageObject);
+
     const id = messageID++;
-    const messageObject = JSON.parse(message);
-    console.log("messageObject:" + messageObject);
     messageObject.id = id;
-    wss.broadcast(JSON.stringify(messageObject));
-    console.log("JSON:" + JSON.stringify(messageObject));
+
+    if(messageObject.type == "postMessage"){
+
+
+      //this line broadcasts object back to connected clients(calls wss.broadcast)
+      wss.broadcast(JSON.stringify(messageObject));
+    }else if (messageObject.type == "postNotification"){
+      wss.broadcast(JSON.stringify(messageObject));
+    }
+
+
+
+
+
+
   });
+
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
   ws.on('close', () => console.log('Client disconnected'));

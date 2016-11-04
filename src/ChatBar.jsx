@@ -3,26 +3,31 @@ import React, {Component} from 'react';
 class ChatBar extends Component {
   constructor(props){
     super(props)
-    this.handleSubmit = this.handleSubmit.bind(this);
+
+    this.handleChangeUserName = this.handleChangeUserName.bind(this)
+    this.handleNewMessage = this.handleNewMessage.bind(this)
+  }
+
+handleChangeUserName(event){
+  if(event.key == 'Enter'){
+    let newname = event.target.value;
+    this.props.changeName("bob", newname);
+  }
 }
 
-handleSubmit(event){
+handleNewMessage(event){
   if(event.key == 'Enter'){
-    let text = this.refs['message-input-box'].value;
     let user = this.refs['username-input-box'].value;
+    let text = event.target.value;
     this.refs['message-input-box'].value = "";
-
     if(user.length === 0){
       user = "Anonymous"
     }
-
     if(text.length > 0){
       this.props.newMessage(user, text);
     }
   }
-
 }
-
 
 
 render() {
@@ -35,15 +40,17 @@ render() {
           type="text"
           placeholder={this.props.currentUser.name}
           ref="username-input-box"
+          onKeyDown={this.handleChangeUserName}
            />
+
         <input
           id="new-message"
           type="text"
           placeholder="Type a message and hit ENTER"
           ref="message-input-box"
-          onKeyDown={this.handleSubmit}
+          onKeyDown={this.handleNewMessage}
            />
-          }
+
       </footer>
     );
   }

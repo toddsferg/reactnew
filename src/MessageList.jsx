@@ -12,8 +12,8 @@ class MessageList extends Component {
       <div id="message-list">
 
       {this.props.messages.map((message, index) => {
-            console.log(message);
-            console.log(index);
+            // console.log(message);
+            // console.log(index);
           return <Message
             message = {message}
             key = {index}

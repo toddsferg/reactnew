@@ -7,7 +7,8 @@ class App extends Component {
   constructor(props) {
 
     super(props);
-    this.pushNewMessage = this.pushNewMessage.bind(this);
+    this.sendNewMessage = this.sendNewMessage.bind(this);
+    this.changeName = this.changeName.bind(this);
     this.state = {
       currentUser: {name: ""}, // optional. if currentUser is not defined, it means the user is Anonymous
       messages: []
@@ -17,28 +18,58 @@ class App extends Component {
   componentDidMount(){
     this.socket = new WebSocket("ws://localhost:4000");
     this.socket.onopen = (event) => {
-      console.log("Connected to Server.")
-      this.socket.onmessage = (event) => {
-        const newMessage = JSON.parse(event.data);
-        console.log(event.data);
-        const post = this.state.messages.concat(newMessage);
-        this.setState({messages: post});
+      console.log("Connected to Server.");
+    }
+
+      // OBJECT COMING IN FROM SERVER AFTER INITIAL SEND - NEW DATA
+    this.socket.onmessage = (event) => {
+      const obj = JSON.parse(event.data);
+      console.log("OBJ:" , obj);
+
+
+
+    if(obj.type == "postMessage"){
+      var post = this.state.messages.concat(obj);
+      console.log("POST:" + post);
+      this.setState({messages: post});
+       }else if(obj.type =="postNotification"){
+        var post = this.state.messages.concat(obj);
+        this.setState({messages:post})
+
+
+
+       }
       }
     }
-  };
 
+
+
+  //Send message to the scoket server
   sendMessageToServer(messageObj){
-  this.socket.send(JSON.stringify(messageObj))
+
+    this.socket.send(JSON.stringify(messageObj));
+    console.log(messageObj);
   }
 
+  //pushes message object into sending to server
+  sendNewMessage(name, content){
 
-  pushNewMessage(name, content){
+    let newMessage = {
+      type:"postMessage",
+      username: name,
+      content: content
+    };
+      this.sendMessageToServer(newMessage);
+  }
 
-    const newMessage = {username: name,
-      content: content};
-    // console.log(newMessage)
-    // const messages = this.state.messages.concat(newMessage);
-    // this.setState({messages: messages});
+  changeName(oldname, newname){
+    let newMessage = {
+    type: "postNotification",
+    oldname: oldname,
+    newname: newname
+
+    }
+    console.log(newMessage);
     this.sendMessageToServer(newMessage);
   }
 
@@ -50,10 +81,10 @@ class App extends Component {
           <h1>Chatty</h1>
         </nav>
         <div id="message-list">
-          <MessageList messages={this.state.messages}/>
+          <MessageList messages={this.state.messages} />
 
         </div>
-        <Chatbar currentUser={this.state.currentUser.name} newMessage={this.pushNewMessage}/>
+        <Chatbar currentUser={this.state.currentUser.name} newMessage={this.sendNewMessage} changeName={this.changeName}/>
       </div>
     );
   }
