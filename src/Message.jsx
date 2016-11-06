@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 class Message extends Component {
   render() {
     console.log("Message render");
-    console.log(this.props.message);
+    console.log("whar: " + this.props.message);
 
     var newMessageHTML = (
       <div className="message">

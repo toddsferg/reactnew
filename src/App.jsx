@@ -11,7 +11,8 @@ class App extends Component {
     this.changeName = this.changeName.bind(this);
     this.state = {
       currentUser: {name: ""}, // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: []
+      messages: [],
+      userCount: 0
   };
 }
 
@@ -19,6 +20,7 @@ class App extends Component {
     this.socket = new WebSocket("ws://localhost:4000");
     this.socket.onopen = (event) => {
       console.log("Connected to Server.");
+
     }
 
       // OBJECT COMING IN FROM SERVER AFTER INITIAL SEND - NEW DATA
@@ -28,17 +30,17 @@ class App extends Component {
 
 
 
+
     if(obj.type == "postMessage"){
       var post = this.state.messages.concat(obj);
       console.log("POST:" + post);
       this.setState({messages: post});
-       }else if(obj.type =="postNotification"){
+       } else if(obj.type =="postNotification"){
         var post = this.state.messages.concat(obj);
         this.setState({messages:post})
-
-
-
-       }
+      } else if(obj.type == "userCount"){
+        this.setState({userCount: obj.userOnline})
+      }
       }
     }
 
@@ -69,7 +71,7 @@ class App extends Component {
     newname: newname
 
     }
-    console.log(newMessage);
+    console.log("This is: newMessage" + newMessage);
     this.sendMessageToServer(newMessage);
   }
 
@@ -79,6 +81,7 @@ class App extends Component {
       <div className="wrapper">
         <nav>
           <h1>Chatty</h1>
+          <h6>Users Online: {this.state.userCount}</h6>
         </nav>
         <div id="message-list">
           <MessageList messages={this.state.messages} />

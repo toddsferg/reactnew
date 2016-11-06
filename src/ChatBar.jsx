@@ -11,7 +11,8 @@ class ChatBar extends Component {
 handleChangeUserName(event){
   if(event.key == 'Enter'){
     let newname = event.target.value;
-    this.props.changeName("bob", newname);
+    let currentUser = this.props.currentUser.name;
+    this.props.changeName(currentUser, newname);
   }
 }
 
