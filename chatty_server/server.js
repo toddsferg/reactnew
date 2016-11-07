@@ -37,36 +37,29 @@ wss.broadcast(JSON.stringify({
 }));
 
    //incoming data from App.js
-  ws.on('message', function incoming(data){
-    let response = {};
-    let messageObject = JSON.parse(data);
-    console.log("wahtHHHHHHHHH: " + messageObject);
+ws.on('message', function incoming(data){
+  let response = {};
+  let messageObject = JSON.parse(data);
+  console.log("wahtHHHHHHHHH: " + messageObject);
+  const id = messageID++;
+  messageObject.id = id;
 
-    const id = messageID++;
-    messageObject.id = id;
-
-    if(messageObject.type == "postMessage"){
-
-
-      //this line broadcasts object back to connected clients(calls wss.broadcast)
-      wss.broadcast(JSON.stringify(messageObject));
-    }else if (messageObject.type == "postNotification"){
-      wss.broadcast(JSON.stringify(messageObject));
-    }
+  if(messageObject.type == "postMessage"){
 
 
-
-
-
-
-  });
-  ws.on('close', function(){
-    userOnline -= 1;
-    wss.broadcast(JSON.stringify({
-      type: 'userCount',
-      userOnline: userOnline
-    }))
-  })
+    //this line broadcasts object back to connected clients(calls wss.broadcast)
+    wss.broadcast(JSON.stringify(messageObject));
+  }else if (messageObject.type == "postNotification"){
+    wss.broadcast(JSON.stringify(messageObject));
+  }
+});
+ws.on('close', function(){
+  userOnline -= 1;
+  wss.broadcast(JSON.stringify({
+    type: 'userCount',
+    userOnline: userOnline
+  }))
+})
 
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.

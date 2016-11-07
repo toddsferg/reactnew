@@ -65,6 +65,10 @@ class App extends Component {
   }
 
   changeName(oldname, newname){
+
+    this.state.currentUser.name = newname;
+    this.setState(this.state);
+
     let newMessage = {
     type: "postNotification",
     oldname: oldname,
@@ -76,7 +80,7 @@ class App extends Component {
   }
 
   render() {
-    console.log();
+    console.log("Currentuser in chatbat: " + this.state.currentUser.name);
     return (
       <div className="wrapper">
         <nav>

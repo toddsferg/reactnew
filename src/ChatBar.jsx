@@ -11,7 +11,9 @@ class ChatBar extends Component {
 handleChangeUserName(event){
   if(event.key == 'Enter'){
     let newname = event.target.value;
-    let currentUser = this.props.currentUser.name;
+    let currentUser = this.props.currentUser;
+    console.log("New name in handleChangeName: " + newname);
+    console.log("currentUser in handleChangeUserName: " + currentUser)
     this.props.changeName(currentUser, newname);
   }
 }
@@ -32,7 +34,7 @@ handleNewMessage(event){
 
 
 render() {
-    console.log("ChatBar render");
+    console.log("Current render: " + this.props.currentUser);
 
     return (
       <footer>
