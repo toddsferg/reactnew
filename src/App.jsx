@@ -21,30 +21,25 @@ class App extends Component {
     this.socket.onopen = (event) => {
       console.log("Connected to Server.");
 
+  }
+
+    // OBJECT COMING IN FROM SERVER AFTER INITIAL SEND - NEW DATA
+  this.socket.onmessage = (event) => {
+    const obj = JSON.parse(event.data);
+    console.log("OBJ:" , obj);
+
+  if(obj.type == "postMessage"){
+    var post = this.state.messages.concat(obj);
+    console.log("POST:" + post);
+    this.setState({messages: post});
+  } else if(obj.type =="postNotification"){
+    var post = this.state.messages.concat(obj);
+    this.setState({messages:post})
+  } else if(obj.type == "userCount"){
+    this.setState({userCount: obj.userOnline})
     }
-
-      // OBJECT COMING IN FROM SERVER AFTER INITIAL SEND - NEW DATA
-    this.socket.onmessage = (event) => {
-      const obj = JSON.parse(event.data);
-      console.log("OBJ:" , obj);
-
-
-
-
-    if(obj.type == "postMessage"){
-      var post = this.state.messages.concat(obj);
-      console.log("POST:" + post);
-      this.setState({messages: post});
-       } else if(obj.type =="postNotification"){
-        var post = this.state.messages.concat(obj);
-        this.setState({messages:post})
-      } else if(obj.type == "userCount"){
-        this.setState({userCount: obj.userOnline})
-      }
-      }
     }
-
-
+  }
 
   //Send message to the scoket server
   sendMessageToServer(messageObj){
@@ -80,7 +75,6 @@ class App extends Component {
   }
 
   render() {
-    console.log("Currentuser in chatbat: " + this.state.currentUser.name);
     return (
       <div className="wrapper">
         <nav>
