@@ -51,6 +51,10 @@ class App extends Component {
   //pushes message object into sending to server
   sendNewMessage(name, content){
 
+    if(name !== this.state.currentUser.name){
+      this.changeName(this.state.currentUser.name, name);
+    }
+
     let newMessage = {
       type:"postMessage",
       username: name,
@@ -65,9 +69,9 @@ class App extends Component {
     this.setState(this.state);
 
     let newMessage = {
-    type: "postNotification",
-    oldname: oldname,
-    newname: newname
+      type: "postNotification",
+      oldname: oldname,
+      newname: newname
 
     }
     console.log("This is: newMessage" + newMessage);
